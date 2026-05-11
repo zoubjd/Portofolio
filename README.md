@@ -2,7 +2,7 @@
 
 A terminal-style interactive portfolio built with HTML, CSS, and JavaScript.
 
-Live demo: link[https://portofolio-ruddy-beta.vercel.app/]
+Live demo: [Portofolio Link](https://portofolio-ruddy-beta.vercel.app/)
 
 ## Features
 
