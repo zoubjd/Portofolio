@@ -547,13 +547,14 @@ const FILES = {
     desc: 'Finance project focused on helping users navigate money with more precision and less chaos.',
     link: 'github.com/zoubjd/PennyPilot',
     year: '2025',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },
   'projects/watchroulette.md': {
   title: 'WatchRoulette',
   tags: ['Next.js', 'TypeScript', 'TMDB', 'Letterboxd', 'Web Scraping'],
   desc: 'Cinematic movie discovery app that pulls public Letterboxd watchlists and randomly selects what to watch next.',
   link: 'github.com/zoubjd/WatchRoulette',
+  live_link: 'https://watch-roulette-three.vercel.app/',
   year: '2026',
   status: 'LIVE',
 },
@@ -563,7 +564,7 @@ const FILES = {
     desc: 'A custom shell project built around process handling, command execution, and Unix fundamentals.',
     link: 'github.com/zoubjd/simple_shell',
     year: '2025',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },
   'projects/monty.md': {
     title: 'monty',
@@ -571,7 +572,7 @@ const FILES = {
     desc: 'Monty bytecode interpreter project, showing low-level C work and core systems logic.',
     link: 'github.com/zoubjd/monty',
     year: '2025',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },
   'projects/devtinder.md': {
     title: 'Devtinder',
@@ -579,7 +580,7 @@ const FILES = {
     desc: 'Full-Stack dating-style but for Job seekers project built with HTML, CSS, and Python in collaboration with my friends.',
     link: 'github.com/zoubjd/Devtinder',
     year: '2025',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },
   'projects/movie_recommendations.md': {
     title: 'Movie_Recommendations',
@@ -587,7 +588,7 @@ const FILES = {
     desc: 'Movie recommendations system using collaborative filtering.',
     link: 'github.com/zoubjd/Movie-Recommendations',
     year: '2026',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },  
   'projects/melbourne_predictor.md': {
     title: 'Melbourne-Housing-Price-Predictor',
@@ -595,7 +596,7 @@ const FILES = {
     desc: 'Melbourne housing prices predictor from multiple features.',
     link: 'github.com/zoubjd/Melbourne-Housing-Price-Predictor',
     year: '2025',
-    status: 'LIVE',
+    status: 'SOURCE CODE',
   },
   '.secret/easter_egg.txt': `
    Congrats on finding this.
@@ -814,6 +815,9 @@ const COMMANDS = {
       await addLine(`  │  Status : ${content.status === 'LIVE' ? '🟢 ' : '🔴 '}${content.status}`, 'out');
       await addLine(`  │  Stack  : ${content.tags.join(' · ')}`, 'out');
       await addLine(`  │  Link   : ${content.link}`, 'cyan');
+      if (content.live_link) {
+      await addLine(`  │  Live Link : ${content.live_link}`, 'cyan');
+      }
       await addLine(`  │`, 'dim');
       await addLine(`  └──────────────────────────────────────────`, 'amber');
       await spacer();
