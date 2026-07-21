@@ -33,28 +33,6 @@
     cursor: none;
   }
 
-  /* Custom cursor */
-  #cursor {
-    position: fixed;
-    width: 12px;
-    height: 12px;
-    border: 1.5px solid var(--green);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.1s;
-    mix-blend-mode: screen;
-  }
-  #cursor-dot {
-    position: fixed;
-    width: 3px;
-    height: 3px;
-    background: var(--green);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-  }
-
   /* Scanlines */
   #scanlines {
     position: fixed;
@@ -92,59 +70,51 @@
     opacity: 0.35;
   }
 
-  /* Boot screen */
+  /* Boot screen — Linux console style */
   #boot {
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: var(--bg);
+    background: #000;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
+    align-items: flex-start;
+    justify-content: flex-start;
     transition: opacity 0.8s ease;
-    overflow-x: auto;
-    padding: 16px;
+    overflow: hidden;
+    padding: 20px 24px;
     box-sizing: border-box;
   }
   #boot.hide { opacity: 0; pointer-events: none; }
 
-  .boot-logo {
-    font-size: 10px;
-    line-height: 1.15;
-    color: var(--green);
-    text-shadow: 0 0 20px var(--green);
-    white-space: pre;
-    text-align: center;
-    animation: flicker 4s infinite;
-    max-width: 100%;
+  #boot-log {
+    font-size: 13px;
+    line-height: 1.55;
+    width: 100%;
+    max-width: 720px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .boot-line { display: block; }
+  .boot-line.boot-header { color: var(--amber); }
+  .boot-line.boot-ok { color: var(--green); }
+  .boot-line.boot-info { color: var(--cyan); }
+  .boot-line.boot-dim { color: #888; }
+  .boot-line.boot-out { color: #bbb; }
+  .boot-line.boot-blank { height: 0.55em; }
+
+  .boot-cursor {
     display: inline-block;
-  }
-  @keyframes flicker {
-    0%,96%,98%,100% { opacity: 1; }
-    97%,99% { opacity: 0.6; }
-  }
-
-  .boot-status {
-    font-size: 12px;
-    color: var(--green-dim);
-    width: 320px;
-  }
-
-  .boot-bar-wrap {
-    width: 320px;
-    height: 2px;
-    background: #111;
-    border: 0.5px solid var(--green-dim);
-    margin-top: 4px;
-  }
-  .boot-bar {
-    height: 100%;
+    width: 0.55em;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
     background: var(--green);
-    width: 0%;
-    box-shadow: 0 0 8px var(--green);
-    transition: width 0.1s linear;
+    animation: boot-blink 1s step-end infinite;
+  }
+  @keyframes boot-blink {
+    50% { opacity: 0; }
   }
 
   /* Main terminal */
@@ -345,15 +315,7 @@
 
 <!-- Boot screen -->
 <div id="boot">
-  <pre class="boot-logo">
-███████╗ ██████╗ ██╗   ██╗██╗  ██╗ █████╗ ██╗██████╗     ██████╗  █████╗      ██╗██████╗  ██████╗ ██╗   ██╗██████╗ ██╗
-╚══███╔╝██╔═══██╗██║   ██║██║  ██║██╔══██╗██║██╔══██╗    ██╔══██╗██╔══██╗     ██║██╔══██╗██╔═══██╗██║   ██║██╔══██╗██║
-  ███╔╝ ██║   ██║██║   ██║███████║███████║██║██████╔╝    ██████╔╝███████║     ██║██║  ██║██║   ██║██║   ██║██████╔╝██║
- ███╔╝  ██║   ██║██║   ██║██╔══██║██╔══██║██║██╔══██╗    ██╔══██╗██╔══██║██   ██║██║  ██║██║   ██║██║   ██║██╔══██╗██║
-███████╗╚██████╔╝╚██████╔╝██║  ██║██║  ██║██║██║  ██║    ██████╔╝██║  ██║╚█████╔╝██████╔╝╚██████╔╝╚██████╔╝██║  ██║██║
-╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ╚════╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝</pre>
-  <div class="boot-status" id="boot-status">Initializing kernel...</div>
-  <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
+  <div id="boot-log"><span class="boot-cursor" id="boot-cursor" aria-hidden="true"></span></div>
 </div>
 
 <!-- Main terminal -->
@@ -481,36 +443,63 @@ updateClock();
 setInterval(updateClock, 1000);
 
 // ─── BOOT SEQUENCE ─────────────────────────────────────────────────────────
-const bootSteps = [
-  [10,  'Initializing kernel...'],
-  [22,  'Loading memory modules... OK'],
-  [35,  'Mounting filesystems... OK'],
-  [50,  'Starting network services... OK'],
-  [63,  'Loading profile: zouhair@portfolio'],
-  [78,  'Importing project registry...'],
-  [90,  'Calibrating display... OK'],
-  [100, 'Boot complete. Welcome.'],
+const bootSequence = [
+  { text: 'Booting PortfolioOS 1.0 (GNU/Linux 6.8.0-41-generic x86_64)', class: 'boot-header', delay: 60 },
+  { text: '', class: 'boot-blank', delay: 40 },
+  { text: 'Linux version 6.8.0-41-generic (build@portfolio) #41 SMP PREEMPT_DYNAMIC', class: 'boot-dim', delay: 90 },
+  { text: 'Command line: BOOT_IMAGE=/boot/vmlinuz root=UUID=a7c3-portofolio ro quiet', class: 'boot-dim', delay: 70 },
+  { text: '', class: 'boot-blank', delay: 30 },
+  { text: '[  OK  ] Mounted root filesystem on /dev/sda1 (ext4).', class: 'boot-ok', delay: 110 },
+  { text: '[  OK  ] Started udev Kernel Device Manager.', class: 'boot-ok', delay: 95 },
+  { text: '[  OK  ] Reached target Local File Systems.', class: 'boot-ok', delay: 85 },
+  { text: '[  OK  ] Started Network Manager.', class: 'boot-ok', delay: 120 },
+  { text: '[  OK  ] Network interface eth0 is online (link detected).', class: 'boot-ok', delay: 100 },
+  { text: '[  OK  ] Started OpenSSH server daemon.', class: 'boot-ok', delay: 90 },
+  { text: '[  OK  ] Loaded user profile: zouhair@portfolio.', class: 'boot-ok', delay: 105 },
+  { text: '[  OK  ] Indexed Git repositories under ~/projects.', class: 'boot-ok', delay: 95 },
+  { text: '[  OK  ] Loaded project database from ~/projects/.', class: 'boot-ok', delay: 100 },
+  { text: '[  OK  ] Started interactive bash shell.', class: 'boot-ok', delay: 110 },
+  { text: '[  OK  ] Reached target Multi-User System.', class: 'boot-ok', delay: 90 },
+  { text: '', class: 'boot-blank', delay: 50 },
+  { text: 'PortfolioOS 1.0 x86_64', class: 'boot-info', delay: 70 },
+  { text: '', class: 'boot-blank', delay: 35 },
+  { text: 'Welcome to the portfolio of Zouhair Bajdouri.', class: 'boot-out', delay: 80 },
+  { text: 'Software Developer · Networking · Cybersecurity', class: 'boot-dim', delay: 70 },
+  { text: '', class: 'boot-blank', delay: 40 },
 ];
 
-const bootBar = document.getElementById('boot-bar');
-const bootStatus = document.getElementById('boot-status');
-let stepIdx = 0;
+const bootLog = document.getElementById('boot-log');
+const bootCursor = document.getElementById('boot-cursor');
+let bootIdx = 0;
+
+function appendBootLine(step) {
+  const line = document.createElement('div');
+  line.className = 'boot-line ' + step.class;
+  line.textContent = step.text;
+  bootLog.insertBefore(line, bootCursor);
+}
+
+function finishBoot() {
+  bootCursor.remove();
+  setTimeout(() => {
+    document.getElementById('boot').classList.add('hide');
+    document.getElementById('terminal').classList.add('show');
+    setTimeout(showWelcome, 500);
+  }, 1200);
+}
 
 function runBoot() {
-  if (stepIdx >= bootSteps.length) {
-    setTimeout(() => {
-      document.getElementById('boot').classList.add('hide');
-      document.getElementById('terminal').classList.add('show');
-      setTimeout(showWelcome, 300);
-    }, 500);
+  if (bootIdx >= bootSequence.length) {
+    finishBoot();
     return;
   }
-  const [pct, msg] = bootSteps[stepIdx++];
-  bootBar.style.width = pct + '%';
-  bootStatus.textContent = msg;
-  setTimeout(runBoot, 200 + Math.random() * 250);
+  const step = bootSequence[bootIdx++];
+  appendBootLine(step);
+  const jitter = Math.floor(Math.random() * 55);
+  setTimeout(runBoot, step.delay + jitter);
 }
-setTimeout(runBoot, 600);
+
+setTimeout(runBoot, 180);
 
 // ─── TERMINAL ENGINE ───────────────────────────────────────────────────────
 const output = document.getElementById('output');
@@ -533,7 +522,7 @@ const FILES = {
   'README.md': `
   ┌─────────────────────────────────────────────┐
   │  Welcome to Zouhair Bajdouri's portfolio.   │
-  │  Coding, systems, and security—no fluff.    │
+  │  Coding, systems, and security.             │
   │  Type  help  to see what you can do.        │
   └─────────────────────────────────────────────┘`,
 
@@ -660,7 +649,7 @@ async function showWelcome() {
     await addLine(ascii[i], 'ascii-block', i * 40);
   }
   await addLine('', 'spacer', d * 7);
-  await addLine('  ZOUHAIR BAJDOURI  ·  Full-Stack Developer  ·  Fes, Morocco', 'amber', d * 8);
+  await addLine('  ZOUHAIR BAJDOURI  ·  Software Developer  ·  Fes, Morocco', 'amber', d * 8);
   await addLine('  ─────────────────────────────────────────────────────────', 'dim', d * 9);
   await addLine('', 'spacer', d * 10);
   await addLine('  System online. Type  help  to explore.', 'out', d * 11);
@@ -683,7 +672,6 @@ const COMMANDS = {
       ['contact',          'Get in touch'],
       ['open [project]',   'Open the project Github repo'],
       ['cd [dir]',         'Change directory (try cd projects/)'],
-      ['cd ..',            'Parent directory (already at ~? try it 😉)'],
       ['github',           'Open my Github profile'],
       ['linkedin',         'Open my LinkedIn profile'],
       ['clear',            'Clear the terminal'],
@@ -707,7 +695,7 @@ const COMMANDS = {
     await addLine('  ╚═══════════════════════════════════════════╝', 'green');
     await spacer();
     await addLine('  Name    : Zouhair Bajdouri', 'out');
-    await addLine('  Role    : Full-Stack / AI / Security Student', 'out');
+    await addLine('  Role    : Software / AI / Security Student', 'out');
     await addLine('  Based   : Fes, Morocco 🇲🇦', 'out');
     await addLine('  Stack   : Python · JavaScript · C · Shell · Rust', 'out');
     await addLine('  Focus   : Web dev, Linux, networking, security, and AI', 'out');
@@ -863,7 +851,7 @@ const COMMANDS = {
     await addLine('  ◈  Social Media  : zoubjd', 'out');
     await spacer();
     await addLine('  I\'m open to freelance, full-time, or collabs.', 'amber');
-    await addLine('  Fast replies guaranteed. Ghosting — not my style.', 'amber');
+    await addLine("  Fast replies guaranteed.", 'amber');
     await spacer();
   },
 
