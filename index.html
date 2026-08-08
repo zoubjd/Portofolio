@@ -672,6 +672,7 @@ const COMMANDS = {
       ['contact',          'Get in touch'],
       ['open [project]',   'Open the project Github repo'],
       ['cd [dir]',         'Change directory (try cd projects/)'],
+      ['cv',           'Open my CV'],
       ['github',           'Open my Github profile'],
       ['linkedin',         'Open my LinkedIn profile'],
       ['clear',            'Clear the terminal'],
@@ -845,7 +846,7 @@ const COMMANDS = {
     await addLine('  CONTACT PROTOCOLS', 'heading');
     await addLine('  ────────────────────────────────────────', 'dim');
     await spacer();
-    await addLine('  ✉  Email    : zouhairbajdouri19@gmail.com', 'out');
+    await addLine('  ✉  Email    : zouhairbjdr@gmail.com', 'out');
     await addLine('  ⎆  GitHub   : github.com/zoubjd', 'cyan');
     await addLine('  ⊞  LinkedIn : linkedin.com/in/zouhair-bajdouri-5a33a5280', 'cyan');
     await addLine('  ◈  Social Media  : zoubjd', 'out');
@@ -857,6 +858,12 @@ const COMMANDS = {
 
   clear: async () => {
     output.innerHTML = '';
+  },
+
+  cv: async () => {
+
+    await addLine('  opening CV...', 'out');
+    window.open('./cv.pdf', '_blank');
   },
 
   history: async () => {
@@ -1016,6 +1023,9 @@ async function runCommand(raw) {
     await COMMANDS.linkedin(args);
   } else if (COMMANDS[cmd]) {
     await COMMANDS[cmd](args);
+  }
+  else if (cmd === 'cv') {
+    await COMMANDS.cv(args);
   }
    else {
     await addLine(`  command not found: ${trimmed}`, 'red');
