@@ -31,4 +31,4 @@ Try:
 
 ## Note
 
-Built as a personal portfolio — focused on simplicity, interaction, and real projects over flashy marketing.
+Built as a personal portfolio — focused on simplicity, interaction, and self representation.
