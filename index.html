@@ -499,7 +499,7 @@ function runBoot() {
   setTimeout(runBoot, step.delay + jitter);
 }
 
-setTimeout(runBoot, 180);
+setTimeout(runBoot, 100);
 
 // ─── TERMINAL ENGINE ───────────────────────────────────────────────────────
 const output = document.getElementById('output');
@@ -576,15 +576,23 @@ const FILES = {
     tags: ['Python', 'ML'],
     desc: 'Movie recommendations system using collaborative filtering.',
     link: 'github.com/zoubjd/Movie-Recommendations',
-    year: '2026',
+    year: '2025',
     status: 'SOURCE CODE',
   },  
-  'projects/melbourne_predictor.md': {
-    title: 'Melbourne-Housing-Price-Predictor',
-    tags: ['Python', 'ML'],
-    desc: 'Melbourne housing prices predictor from multiple features.',
-    link: 'github.com/zoubjd/Melbourne-Housing-Price-Predictor',
+  'projects/Music-Genre-Classification.md': {
+    title: 'GTZAN-Music-Genre-Classification',
+    tags: ['Python', 'ML', 'Deep Learning'],
+    desc: 'music genre classification using both traditional machine learning algorithms and deep learning techniques, including transfer learning and CNN.',
+    link: 'github.com/zoubjd/Music-Genre-Classification',
     year: '2025',
+    status: 'SOURCE CODE',
+  },
+  'projects/TCP_IP_Implementation.md': {
+    title: 'TCP/IP Protocol Modeling',
+    tags: ['MATLAB', 'TCP/IP', 'Networking'],
+    desc: 'simulation of the TCP/IP protocol stack to analyze packet transmission and network behavior.',
+    link: 'github.com/zoubjd/TCP-IP-Protocol-Modilization',
+    year: '2026',
     status: 'SOURCE CODE',
   },
   '.secret/easter_egg.txt': `
@@ -672,7 +680,7 @@ const COMMANDS = {
       ['contact',          'Get in touch'],
       ['open [project]',   'Open the project Github repo'],
       ['cd [dir]',         'Change directory (try cd projects/)'],
-      ['cv',           'Open my CV'],
+      ['cv [eng/fr]',    'download my CV in the specified language'],
       ['github',           'Open my Github profile'],
       ['linkedin',         'Open my LinkedIn profile'],
       ['clear',            'Clear the terminal'],
@@ -860,10 +868,21 @@ const COMMANDS = {
     output.innerHTML = '';
   },
 
-  cv: async () => {
+  cv: async (args) => {
+    if (!args[0] || args[0] !== 'eng' && args[0] !== 'fr') {
+    await addLine('  Usage: cv [eng/fr]', 'amber');
+    return;
+  }
 
-    await addLine('  opening CV...', 'out');
-    window.open('./cv.pdf', '_blank');
+    if (args[0] === 'eng') {
+      window.open('./cv_eng.pdf', '_blank');
+      await addLine('  Opening the English version.', 'green');
+    } else if (args[0] === 'fr') {
+      window.open('./cv_fr.pdf', '_blank');
+      await addLine('  Opening the French version.', 'green');
+    } else {
+      await addLine('  Invalid language. Please use eng or fr.', 'red');
+    }
   },
 
   history: async () => {
